@@ -1,10 +1,10 @@
-from flask import Flask;
-import dbcreds;
-import mariadb;
+from flask import Flask
+import dbcreds
+import mariadb
 
 app = Flask(__name__);
 
-@app.route('/api', methods=['GET'])
+@app.route('/src/api/index.js', methods=['GET'])
 def api():
     return mariadb.connect(
         user=dbcreds.user,
@@ -14,7 +14,7 @@ def api():
         database=dbcreds.database
     )
     
-
+    
 def add_data():
     country = ""
     infected = ""
@@ -24,15 +24,18 @@ def add_data():
     conn = api()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO daily_data (data: {}, country) VALUES (?, ?)",
+        "INSERT INTO daily_data (country, infected, recovered, deaths) VALUES (?, ?, ?, ?)",
         [country, infected, recovered, deaths]
     )
     conn.commit()
 
     if (cursor.rowcount == 1):
-        print("Data added successfully!!!")
+        add_data()
     else:
         print("There was an error")
 
     cursor.close()
     conn.close()
+    
+    
+   
